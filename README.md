@@ -19,12 +19,6 @@ cp .env.example .env
 make re
 ```
 
-## Démo & Tests automatisés
-Une fois le conteneur lancé, vous pouvez jouer les scénarios métiers depuis un autre terminal :
-```bash
-make demo
-```
-
 ## Limites du PoC et évolutions (Cible de Production)
 Dans un environnement de production réel (comme chez bioMérieux), ce PoC Node.js a vocation à disparaître pour être intégré nativement. 
 - **Migration vers ServiceNow** : La logique JavaScript serait portée dans une *Business Rule* ou un *Script Include*, et interrogerait SailPoint via un *REST Message V2*.
