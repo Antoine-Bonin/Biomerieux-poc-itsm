@@ -9,20 +9,21 @@ Ce projet est un micro-service (Proof of Concept) en Node.js/TypeScript. Il simu
 - **Protocole de réponse** : Les erreurs techniques renvoient du JSON (400/401/500), tandis que les décisions "métier" renvoient systématiquement du SOAP (XML) pour s'interfacer avec les systèmes historiques.
 
 ## Lancement rapide
-\`\`\`bash
+
+```bash
 # Configurer les variables d'environnement
 cp .env.example .env
 # Ajouter votre WEBHOOK_SECRET dans .env
 
 # Lancer via Docker
 make re
-\`\`\`
+```
 
 ## Démo & Tests automatisés
 Une fois le conteneur lancé, vous pouvez jouer les scénarios métiers depuis un autre terminal :
-\`\`\`bash
+```bash
 make demo
-\`\`\`
+```
 
 ## Limites du PoC et évolutions (Cible de Production)
 Dans un environnement de production réel (comme chez bioMérieux), ce PoC Node.js a vocation à disparaître pour être intégré nativement. 
