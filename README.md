@@ -1,59 +1,31 @@
 # ITSM Integration PoC (ServiceNow / SailPoint / Teams)
 
-Micro-service Node.js/TypeScript qui simule l'automatisation d'une demande de
-formation entre ServiceNow et le système d'information : vérification de
-l'identité côté SailPoint IIQ, décision automatique, notification Teams et
-réponse SOAP. Projet personnel réalisé comme preuve de concept ; les systèmes
-externes sont simulés (mocks).
+Ce projet est un micro-service (Proof of Concept) en Node.js/TypeScript. Il simule l'orchestration et l'automatisation de processus entre ServiceNow et le système d'information de l'entreprise (Identity Governance).
 
-## Flux
+## Fonctionnalités & Architecture
+- **Webhook ServiceNow** : Écoute et réception des demandes de formation, validées strictement via `zod`.
+- **Logique Métier Partagée** : Vérification des droits (compte actif, formations prérequises validées) via un mock SailPoint sécurisé par une structure `Map` (protection contre l'injection de prototype).
+- **Notification Microsoft Teams** : Formatage de la décision en MessageCard JSON, prêt pour la Graph API.
+- **Protocole de réponse** : Les erreurs techniques renvoient du JSON (400/401/500), tandis que les décisions "métier" renvoient systématiquement du SOAP (XML) pour s'interfacer avec les systèmes historiques.
 
-```
-ServiceNow --POST webhook--> PoC --GET--> Mock SailPoint IIQ
-                              |
-                              +--> Décision (APPROVED / REJECTED)
-                              +--> Payload Teams (loggé, non envoyé)
-                              +--> Réponse SOAP/XML vers ServiceNow
-```
+## Lancement rapide
+\`\`\`bash
+# Configurer les variables d'environnement
+cp .env.example .env
+# Ajouter votre WEBHOOK_SECRET dans .env
 
-## Endpoints
+# Lancer via Docker
+make re
+\`\`\`
 
-| Méthode | Route                      | Rôle                                        |
-|---------|----------------------------|---------------------------------------------|
-| GET     | `/health`                  | Vérification de disponibilité               |
-| GET     | `/api/sailpoint/:id`       | Mock SailPoint : statut de l'identité       |
-| POST    | `/api/webhook/servicenow`  | Réception d'un ticket, décision, réponse XML |
+## Démo & Tests automatisés
+Une fois le conteneur lancé, vous pouvez jouer les scénarios métiers depuis un autre terminal :
+\`\`\`bash
+make demo
+\`\`\`
 
-## Lancement
-
-```bash
-WEBHOOK_SECRET=change-me make re
-```
-
-L'API est disponible sur http://localhost:3000.
-
-## Exemple
-
-```bash
-curl -i -X POST http://localhost:3000/api/webhook/servicenow \
-  -H "Content-Type: application/json" \
-  -H "x-webhook-secret: change-me" \
-  -d '{"ticketId":"INC001","employeeId":"USR_789","trainingName":"GMP Basics"}'
-```
-
-## Sécurité
-
-- Authentification du webhook par secret partagé (`x-webhook-secret`),
-  comparé en temps constant (`crypto.timingSafeEqual`).
-- Secret fourni par variable d'environnement, jamais dans le code.
-- Validation du payload avec zod (400 si invalide).
-- Échappement XML des valeurs injectées dans la réponse SOAP.
-
-## Limites du PoC et évolutions en production
-
-- SailPoint et Teams sont simulés : en production, appels à l'API REST/SCIM
-  d'IIQ et à Microsoft Graph, avec authentification OAuth 2.0.
-- Côté ServiceNow, l'appel serait déclenché par une Business Rule ou un
-  Flow Designer (`RESTMessageV2`).
-- Ajouter : tests automatisés (non-régression), idempotence sur `ticketId`,
-  retries et timeouts, journalisation structurée.
+## Limites du PoC et évolutions (Cible de Production)
+Dans un environnement de production réel (comme chez bioMérieux), ce PoC Node.js a vocation à disparaître pour être intégré nativement. 
+- **Migration vers ServiceNow** : La logique JavaScript serait portée dans une *Business Rule* ou un *Script Include*, et interrogerait SailPoint via un *REST Message V2*.
+- **Authentification** : Remplacement du HMAC par un OAuth2 flow complet avec Azure AD pour l'envoi vers Microsoft Graph.
+- **Assurance Qualité** : Remplacement de `make demo` par une vraie suite de non-régression dans le module **ATF (Automated Test Framework)** de ServiceNow.
