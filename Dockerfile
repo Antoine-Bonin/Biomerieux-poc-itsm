@@ -4,10 +4,10 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm install express zod @types/node @types/express typescript
 
 COPY . .
 
 EXPOSE 3000
 
-CMD ["node", "server.ts"]
+CMD ["node", "--experimental-strip-types", "server.ts"]
