@@ -23,4 +23,3 @@ make re
 Dans un environnement de production réel (comme chez bioMérieux), ce PoC Node.js a vocation à disparaître pour être intégré nativement. 
 - **Migration vers ServiceNow** : La logique JavaScript serait portée dans une *Business Rule* ou un *Script Include*, et interrogerait SailPoint via un *REST Message V2*.
 - **Authentification** : Remplacement du HMAC par un OAuth2 flow complet avec Azure AD pour l'envoi vers Microsoft Graph.
-- **Assurance Qualité** : Remplacement de `make demo` par une vraie suite de non-régression dans le module **ATF (Automated Test Framework)** de ServiceNow.
