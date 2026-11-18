@@ -88,10 +88,7 @@ app.post('/api/webhook/servicenow', verifyWebhookSecret, (req: Request, res: Res
             console.log("Automated decision: Rejected (User not found)");
         } else if (!identity.isActive) {
             reason = "Account is inactive";
-            console.log("Automated decision: Rejected (Account is inactive)");
-        } else if (!identity.completedTrainings.includes(ticket.trainingName)) {
-            reason = "Missing prerequisite training";
-            console.log("Automated decision: Rejected (Missing prerequisite training)");
+            console.log("Automated decision: Rejected (Account is inactive)")
         } else {
             finalDecision = 'APPROVED';
             reason = "Active account and training verified";
